@@ -1,1 +1,1 @@
-# awsbasicInfra
+Este template fue hecho para un examen se encarga de tener diversas zonas de disponiblidad, un NLB, y conexión por SSH.
