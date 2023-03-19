@@ -1,1 +1,4 @@
-Este template fue hecho para un examen se encarga de tener diversas zonas de disponiblidad, un NLB, y conexión por SSH.
+Este repositorio permite crear networking de AWS con Cloudformation o con Terraform
+
+Por favor tener en cuenta que existen diferencias entre uno y otro, y lo he ido mejorando a lo largo de mi experiencia con cada tecnología.
+
