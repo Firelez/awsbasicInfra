@@ -1,0 +1,65 @@
+Parameters:
+  AppName:
+    Type: String
+    Description: Name of the application.
+    MinLength: "1"
+    MaxLength: "100"
+    Default: test
+
+  IamRolesURL:
+    Description: URL of the Iam nested stack template
+    Type: String
+
+  PipelineURL:
+    Description: URL of the Iam nested stack template
+    Type: String
+
+ ## pipelineCF
+ 
+  SAMInputFile:
+    Type: String
+    Description: The filename for the SAM file.
+    Default: samTemplate.yaml
+  SAMOutputFile:
+    Type: String
+    Description: The filename for the output SAM file from the buildspec file.
+    Default: post-saml.yaml
+  CodeBuildImage:
+    Type: String
+    Default: "aws/codebuild/amazonlinux2-x86_64-standard:3.0"
+    Description: Image used for CodeBuild project.
+  CodeCommitRepoName:
+    Type: String
+    Description: The CodeCommit repo name
+  CodeCommitRepoBranch:
+    Type: String
+    Description: The CodeCommit repo branch code pipelines should watch for changes on
+    Default: master
+
+
+Resources:
+  pipelineIamRolesStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Ref IamRolesURL
+      Parameters:
+        AppName: !Ref AppName
+      TimeoutInMinutes: 10
+  
+  pipelineStack:
+    DependsOn: pipelineIamRolesStack
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Ref PipelineURL
+      Parameters:
+        AppName: !Ref AppName
+        SAMInputFile: !Ref SAMInputFile
+        SAMOutputFile: !Ref SAMOutputFile
+        CodeBuildImage: !Ref CodeBuildImage
+        CodeCommitRepoName: !Ref CodeCommitRepoName
+        CodeCommitRepoBranch: !Ref CodeCommitRepoBranch
+        CodePipelineRole: !GetAtt pipelineIamRolesStack.Outputs.CodePipelineRole
+        CloudformationRole: !GetAtt pipelineIamRolesStack.Outputs.CloudformationDeployRole
+        CodeBuildRole: !GetAtt pipelineIamRolesStack.Outputs.CodeBuildRole
+      TimeoutInMinutes: 10
+
